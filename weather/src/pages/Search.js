@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   Link,
+  withRouter
 } from "react-router-dom"
 
 import {
@@ -20,6 +21,22 @@ class Search extends React.Component {
     }
   }
 
+  search = () => {
+    fetch(`http://www.mapquestapi.com/geocoding/v1/address?key=m1lsJZVvDgjMwJ4bAmiVTdEqoJ9h2DeA&location=${this.state.zipToSearch}`)
+      .then(res => res.json())
+      .then(
+        result => {
+          let location = result.results[0].locations[0]
+          console.log(location)
+          this.props.setLocation({city: location.adminArea5, state: location.adminArea3, zip: location.postalCode, latitude: location.latLng.lat, longtitude: location.latLng.lng})
+          this.props.history.push(`/location/${this.state.zipToSearch}`)
+        },
+        error => {
+          alert("The zip code entered is invalid.")
+        }
+      )
+  }
+
   render() {
     const {
       zipToSearch,
@@ -35,7 +52,7 @@ class Search extends React.Component {
             name="map marker alternate"
           />
           <Header.Subheader>
-            Enter a Zip Code to Look up the Weather History.
+            Enter a zip code to look up the climate history.
           </Header.Subheader>
         </Header>
         <form>
@@ -48,12 +65,13 @@ class Search extends React.Component {
               this.setState({zipToSearch: data.value})
             }}
           />
-          <Link to={`/location/${zipToSearch}`}><Button 
+          <Link><Button 
             color="blue"
             icon
             id="search-btn"
-            primary
             labelPosition="right"
+            onClick={() => this.search()}
+            primary
             size="large"
           >
             Search
@@ -65,4 +83,4 @@ class Search extends React.Component {
   }
 }
 
-export default Search
+export default withRouter(Search)
