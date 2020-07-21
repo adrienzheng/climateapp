@@ -38,9 +38,6 @@ class Search extends React.Component {
   }
 
   render() {
-    const {
-      zipToSearch,
-    } = this.state
     return (
       <div id="search-cont">
         <Header

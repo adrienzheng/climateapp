@@ -15,13 +15,10 @@ import {
 import {
   Button,
   Dropdown,
-  Header,
   Icon,
-  Input,
   Loader,
   Menu,
   Segment,
-  Table,
 } from 'semantic-ui-react'
 
 import Highcharts, { chart } from "highcharts/highstock"
@@ -29,11 +26,12 @@ import HighchartsReact from "highcharts-react-official"
 
 import moment from 'moment'
 
+import ClimateTable from '../components/Table'
+import ClimateChart from '../components/Chart'
+
 import {
   determineBbox,
   processMetaResults,
-  getDailyData,
-  getDataTable,
 } from "../helpers"
 
 import "../styles/home.scss"
@@ -44,7 +42,7 @@ class Home extends React.Component {
     super(props)
     this.state = {
       currentDate: moment().format('YYYY-MM-DD'),
-      currentDataPoint: "Max Temperature",
+      currentDataPoint: "Daily Max Temperature",
       currentLocation: null,
       currentStationData: null,
       currentStationId: null,
@@ -60,7 +58,6 @@ class Home extends React.Component {
 
   getStations = () => {
     this.setState({isSearchingState: true})
-    console.log("get")
     axios.get(`http://www.mapquestapi.com/geocoding/v1/address?key=m1lsJZVvDgjMwJ4bAmiVTdEqoJ9h2DeA&location=${this.props.match.params.zip}`)
       .then(
         result => {
@@ -80,35 +77,21 @@ class Home extends React.Component {
               this.setState({stationList: stationList, currentStationId: stationList[0] ? stationList[0].id : null, isSearchingState: false})
             })
         }
-      ).then(
-        this.setTable()
       )
-  }
-
-  setTable = () => {
-    getDataTable(this.state.currentStationId, this.state.currentDate)
-      .then(table => this.setState({dataTable: table}))
-  }
-
-  searchStationById = id => {
-    for(let i=0; i<this.state.stationList.length; i++) {
-      if(this.state.stationList[i].id === id) {
-        return this.state.stationList[i]
-      }
-    }
-    return this.state.stationList[0]
   }
 
   changeStation = id => {
     console.log(id)
-    let station = this.searchStationById(id)
     this.setState({currentStationId: id})
-    this.setTable()
   }
 
   changeDate = date => {
     this.setState({currentDate: date})
     this.getStations()
+  }
+
+  updateChart = attr => {
+    this.setState({currentDataPoint: attr})
   }
 
   render() {
@@ -121,12 +104,9 @@ class Home extends React.Component {
       currentDate,
       currentDataPoint,
       currentLocation,
-      currentStationData,
       currentStationId,
-      dataTable,
       isSearchingState,
       stationList,
-      
     } = this.state
 
     let stationOptions = []
@@ -189,7 +169,7 @@ class Home extends React.Component {
       series: [
         {
           data:chartData.maxtemp.dataSeries,
-          name: "Max Temperature"
+          name: "Daily Max Temperature"
         }
       ]
     }
@@ -240,102 +220,12 @@ class Home extends React.Component {
           </Menu.Menu>
         </Menu>
         <Segment color="blue">
-          <div>
-          {dataTable &&
-          <Table celled structured striped compact unstackable>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell className="hard-left" colspan="2" />
-                <Table.HeaderCell>Observed</Table.HeaderCell>
-                <Table.HeaderCell>Normal</Table.HeaderCell>
-                <Table.HeaderCell>Record Highest</Table.HeaderCell>
-                <Table.HeaderCell>Record Lowest</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              <Table.Row>
-                <Table.Cell className="hard-left" rowspan="6">Daily</Table.Cell>
-                <Table.Cell className="next-left">Max Temperature</Table.Cell>
-                <Table.Cell>{dataTable.daily.maxtemp.obeserved || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.maxtemp.normal || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.maxtemp.hightest || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.maxtemp.lowest || "N/A"}</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell className="next-left">Min Temperature</Table.Cell>
-                <Table.Cell>{dataTable.daily.mintemp.obeserved || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.mintemp.normal || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.mintemp.hightest || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.mintemp.lowest || "N/A"}</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell className="next-left">Average Temperature</Table.Cell>
-                <Table.Cell>{dataTable.daily.avetemp.obeserved || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.avetemp.normal || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.avetemp.hightest || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.avetemp.lowest || "N/A"}</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell className="next-left">Precipitation</Table.Cell>
-                <Table.Cell>{dataTable.daily.precipitation.obeserved || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.precipitation.normal || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.precipitation.hightest || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.precipitation.lowest || "N/A"}</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell className="next-left">Snowdepth</Table.Cell>
-                <Table.Cell>{dataTable.daily.snowdepth.obeserved || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.snowdepth.normal || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.snowdepth.hightest || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.snowdepth.lowest || "N/A"}</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell className="next-left">Snowfall</Table.Cell>
-                <Table.Cell>{dataTable.daily.snowfall.obeserved || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.snowfall.normal || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.snowfall.hightest || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.daily.snowfall.lowest || "N/A"}</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell className="hard-left" rowspan="2">Monthly-To-Date</Table.Cell>
-                <Table.Cell className="next-left">Precipitation</Table.Cell>
-                <Table.Cell>{dataTable.monthly.precipitation.obeserved || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.monthly.precipitation.normal || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.monthly.precipitation.hightest || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.monthly.precipitation.lowest || "N/A"}</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell className="next-left">Snowfall</Table.Cell>
-                <Table.Cell>{dataTable.monthly.snowfall.obeserved || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.monthly.snowfall.normal || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.monthly.snowfall.hightest || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.monthly.snowfall.lowest || "N/A"}</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell className="hard-left">Seasonal-to-Date</Table.Cell>
-                <Table.Cell className="next-left">Snowfall</Table.Cell>
-                <Table.Cell>{dataTable.seasonal.snowfall.obeserved || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.seasonal.snowfall.normal || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.seasonal.snowfall.hightest || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.seasonal.snowfall.lowest || "N/A"}</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell className="hard-left">Yearly-to-Date</Table.Cell>
-                <Table.Cell className="next-left">Precipitation</Table.Cell>
-                <Table.Cell>{dataTable.yearly.precipitation.obeserved || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.yearly.precipitation.normal || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.yearly.precipitation.hightest || "N/A"}</Table.Cell>
-                <Table.Cell>{dataTable.yearly.precipitation.lowest || "N/A"}</Table.Cell>
-              </Table.Row>
-            </Table.Body>
-          </Table>}
+          <div id="table-cont">
+            <ClimateTable id={currentStationId} date={currentDate} updateChart={this.updateChart}/>
           </div>
         </Segment>
         <Segment>
-          <HighchartsReact
-            highcharts={Highcharts}
-            options={chartOptions}
-          />
+          <ClimateChart id={currentStationId} date={currentDate} currentDataPoint={currentDataPoint}/>
         </Segment>
       </div>
     )
