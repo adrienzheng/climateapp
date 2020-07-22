@@ -61,7 +61,6 @@ class App extends React.Component {
 
   render() {
     const {
-      currentLocation,
       deleteConfirmOpen,
       favorites,
       favoritesVisible,

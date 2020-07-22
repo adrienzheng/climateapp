@@ -27,7 +27,6 @@ class Search extends React.Component {
       .then(
         result => {
           let location = result.results[0].locations[0]
-          console.log(location)
           this.props.setLocation({city: location.adminArea5, state: location.adminArea3, zip: location.postalCode, latitude: location.latLng.lat, longtitude: location.latLng.lng})
           this.props.history.push(`/location/${this.state.zipToSearch}`)
         },

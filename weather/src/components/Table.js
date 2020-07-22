@@ -69,7 +69,6 @@ class ClimateTable extends React.Component {
         .get("http://data.rcc-acis.org/StnData", {params: {params: params1}})
         .then(res => {
           let data = res.data.data[0]
-          console.log(data)
           let temptable = table
           temptable.daily.maxtemp.observed = data[1]!=="M" ? data[1]+" °F" : "N/A"
           temptable.daily.maxtemp.normal = data[2]!=="M" ? data[2]+" °F" : "N/A"
@@ -106,12 +105,10 @@ class ClimateTable extends React.Component {
           {name: "snwd", interval: [1,0,0], smry: {add: "date", reduce: "min"}, smry_only: 1}
         ]
       }
-      console.log(params2)
       axios //get daily record high and low
         .get("http://data.rcc-acis.org/StnData", {params: {params: params2}})
         .then(res => {
           let summary = res.data.smry
-          console.log(summary)
           let temptable = table
           temptable.daily.maxtemp.highest = summary[0][0]!== "M" ? summary[0][0] + " °F (" + summary[0][1] + ")" : "N/A"
           temptable.daily.maxtemp.lowest = summary[1][0]!== "M" ? summary[1][0] + " °F (" + summary[1][1] + ")" : "N/A"
@@ -144,12 +141,10 @@ class ClimateTable extends React.Component {
           {name: "pcpn", interval: [1,0,0], duration: "ytd", reduce: "sum", normal: 1},
         ]
       }
-      console.log(params3)
       axios //get month/season/year-to-date observed and normal
         .get("http://data.rcc-acis.org/StnData", {params: {params: params3}})
         .then(res => {
           let data = res.data.data[0]
-          console.log(data)
           let temptable = table
           temptable.monthly.precipitation.observed = data[1]!=="T" ? (data[1]!=="M" ? data[1] + " inches" : "N/A") : "T"
           temptable.monthly.precipitation.normal = data[2]!=="T" ? (data[2]!=="M" ? data[2] + " inches" : "N/A") : "T"
@@ -184,7 +179,6 @@ class ClimateTable extends React.Component {
         .get("http://data.rcc-acis.org/StnData", {params: {params: params4}})
         .then(res => {
           let summary = res.data.smry
-          console.log(summary)
           let temptable = this.state.table
           temptable.monthly.precipitation.highest = summary[0][0] === "M" ? "N/A" : (summary[0][0] === "T" ? "T" : summary[0][0] + " inches") + " (" + summary[0][1] + ")"
           temptable.monthly.precipitation.lowest = summary[1][0] === "M" ? "N/A" : (summary[1][0] === "T" ? "T" : summary[1][0] + " inches") + " (" + summary[1][1] + ")"
@@ -203,7 +197,7 @@ class ClimateTable extends React.Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    if(prevProps != this.props){
+    if(prevProps !== this.props){
       this.getTableData()
     }
   }
@@ -231,7 +225,6 @@ class ClimateTable extends React.Component {
       table
     } = this.state
 
-    let chartButton = <Button icon="chart line" size="mini" compact floated="right"/>
     return (
       <Table celled structured striped compact unstackable>
         <Table.Header>

@@ -2,7 +2,6 @@
 import React from 'react'
 import axios from 'axios'
 
-import _ from 'lodash'
 import {
   DateInput,
 } from 'semantic-ui-calendar-react'
@@ -20,9 +19,6 @@ import {
   Menu,
   Segment,
 } from 'semantic-ui-react'
-
-import Highcharts, { chart } from "highcharts/highstock"
-import HighchartsReact from "highcharts-react-official"
 
 import moment from 'moment'
 
@@ -52,8 +48,6 @@ class Home extends React.Component {
     }
 
     this.getStations()
-
-    console.log(this.state)
   }
 
   getStations = () => {
@@ -65,7 +59,6 @@ class Home extends React.Component {
           let currentLocation = {city: location.adminArea5, state: location.adminArea3, zip: location.postalCode, ll:{lat: location.latLng.lat, lng: location.latLng.lng}}
           this.setState({currentLocation: currentLocation})
           let box = determineBbox(location.latLng.lat, location.latLng.lng)
-          console.log(box.toString())
           axios.get("http://data.rcc-acis.org/StnMeta", {params: {params: {
             meta: "name,state,sids,ll,uid,valid_daterange",
             elems: "maxt,mint,avgt,pcpn,snow,pcpn,snwd",
@@ -81,7 +74,6 @@ class Home extends React.Component {
   }
 
   changeStation = id => {
-    console.log(id)
     this.setState({currentStationId: id})
   }
 
@@ -110,69 +102,9 @@ class Home extends React.Component {
     } = this.state
 
     let stationOptions = []
-    stationList.map((station, index) => {
+    stationList.forEach((station, index) => {
       stationOptions.push({key: station.id + " " + index, value: station.id, text: `${station.name} (${Math.round((station.distance + Number.EPSILON) * 10) / 10}miles away)`})
     })
-
-    const chartData = {
-      maxtemp: {
-        start: 1960,
-        end: 2020,
-        dataSeries: [94, 93, null, 96.5, 84, 76, 100, 87.5, 92, 97, 89, 79, 99, 93, 95, 87, 90, 84, 98, 94, 93, 92, 96.5, 84, 76, 100, 87.5, 92, 97, 89, 79, 99, 93, 95, 87, 90, 84, 98, 94, 93, 92, 96.5, 84, 76, 100, 87.5, 92, 97, 89, 79, 99, 93, 95, 87, 90, 84, 98, 90]
-      },
-      mintemp: {
-        start: 2000,
-        end: 2020,
-        dataSeries: [94, 93, 92, 96.5, 84, 76, 100, 87.5, 92, 97, 89, 79, 99, 93, 95, 87, 90, 84, 98, 90]
-      },
-      avetemp: {
-        start: 2000,
-        end: 2020,
-        dataSeries: [94, 93, 92, 96.5, 84, 76, 100, 87.5, 92, 97, 89, 79, 99, 93, 95, 87, 90, 84, 98, 90]
-      },
-      precipitation: {
-        start: 2000,
-        end: 2020,
-        dataSeries: [94, 93, 92, 96.5, 84, 76, 100, 87.5, 92, 97, 89, 79, 99, 93, 95, 87, 90, 84, 98, 90]
-      },
-      snowdepth: {
-        start: 2000,
-        end: 2020,
-        dataSeries: [94, 93, 92, 96.5, 84, 76, 100, 87.5, 92, 97, 89, 79, 99, 93, 95, 87, 90, 84, 98, 90]
-      },
-    }
-
-    const chartOptions = {
-      chart: {
-        type: "line",
-        zoomType: "x",
-      },
-      title: {
-        text: currentDataPoint,
-      },
-      xAxis: {
-        categories: _.range(chartData.maxtemp.start, chartData.maxtemp.end + 1)
-      },
-      yAxis: {
-        title: {
-          text: "Temperature (°F)"
-        }
-      },
-      plotOptions: {
-        line: {
-          dataLabels: {
-              enabled: true
-          },
-          enableMouseTracking: true
-        }
-      },
-      series: [
-        {
-          data:chartData.maxtemp.dataSeries,
-          name: "Daily Max Temperature"
-        }
-      ]
-    }
 
     return (
       currentLocation && <div id="home-cont">
