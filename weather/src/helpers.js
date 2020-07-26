@@ -56,7 +56,7 @@ const getInfoFromMeta = (metaResults, idPriority, srchCenter) => {
 			return {
 				id: sid,
 				whichVdr: whichVdr,
-				name: metaResults.name + ', ' + metaResults.state,
+				name: metaResults.name,
 				distance: srchCenter ? geoDistance(srchCenter, {lat: metaResults.ll[1], lng: metaResults.ll[0]}) : null,
 				position: [metaResults.ll[1], metaResults.ll[0]],
 				vdr: metaResults.valid_daterange[whichVdr],
@@ -92,42 +92,4 @@ export const getDailyData = (id, date, attr, normal=false) =>{
   return axios.get("http://data.rcc-acis.org/StnData", {params: {params: params}}).then(res => {
     return res
   }).catch(err => {return "NA"})
-}
-
-export const getDataTable = (id, date) => {
-  let table = {
-    daily: {
-      maxtemp: {obeserved: null, normal: null, hightest: null, lowest: null},
-      mintemp: {obeserved: null, normal: null, hightest: null, lowest: null},
-      avetemp: {obeserved: null, normal: null, hightest: null, lowest: null},
-      precipitation: {obeserved: null, normal: null, hightest: null, lowest: null},
-      snowfall: {obeserved: null, normal: null, hightest: null, lowest: null},
-      snowdepth: {obeserved: null, normal: null, hightest: null, lowest: null}
-    },
-    monthly: {
-      precipitation: {obeserved: null, normal: null, hightest: null, lowest: null},
-      snowfall: {obeserved: null, normal: null, hightest: null, lowest: null}
-    },
-    seasonal: {
-      snowfall: {obeserved: null, normal: null, hightest: null, lowest: null}
-    },
-    yearly: {
-      precipitation: {obeserved: null, normal: null, hightest: null, lowest: null},
-    }
-  }
-
-  return getDailyData(id, date, "maxt").then(res => {table.daily.maxtemp.obeserved = (res.data && res.data.data) ? res.data.data[0][1] : null}).then(
-  getDailyData(id, date, "maxt", true).then(res => table.daily.maxtemp.normal = (res.data && res.data.data) ? res.data.data[0][1] : null)).then(
-  getDailyData(id, date, "mint").then(res => table.daily.mintemp.obeserved = (res.data && res.data.data) ? res.data.data[0][1] : null)).then(
-  getDailyData(id, date, "mint", true).then(res => table.daily.mintemp.normal = (res.data && res.data.data) ? res.data.data[0][1] : null)).then(
-  getDailyData(id, date, "avgt").then(res => table.daily.avetemp.obeserved = (res.data && res.data.data) ? res.data.data[0][1] : null)).then(
-  getDailyData(id, date, "avgt", true).then(res => table.daily.avetemp.normal = (res.data && res.data.data) ? res.data.data[0][1] : null)).then(
-  getDailyData(id, date, "pcpn").then(res => table.daily.precipitation.obeserved = (res.data && res.data.data) ? res.data.data[0][1] : null)).then(
-  getDailyData(id, date, "pcpn", true).then(res => table.daily.precipitation.normal = (res.data && res.data.data) ? res.data.data[0][1] : null)).then(
-  getDailyData(id, date, "snow").then(res => table.daily.snowfall.obeserved = (res.data && res.data.data) ? res.data.data[0][1] : null)).then(
-  getDailyData(id, date, "snow", true).then(res => table.daily.snowfall.normal = (res.data && res.data.data) ? res.data.data[0][1] : null)).then(
-  getDailyData(id, date, "snwd").then(res => table.daily.snowdepth.obeserved = (res.data && res.data.data) ? res.data.data[0][1] : null)).then(
-  getDailyData(id, date, "snwd", true).then(res => table.daily.snowdepth.normal = (res.data && res.data.data) ? res.data.data[0][1] : null)).then(() => {return (table)})
-
-  
 }

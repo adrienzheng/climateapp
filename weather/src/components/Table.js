@@ -110,18 +110,18 @@ class ClimateTable extends React.Component {
         .then(res => {
           let summary = res.data.smry
           let temptable = table
-          temptable.daily.maxtemp.highest = summary[0][0]!== "M" ? summary[0][0] + " °F (" + summary[0][1] + ")" : "N/A"
-          temptable.daily.maxtemp.lowest = summary[1][0]!== "M" ? summary[1][0] + " °F (" + summary[1][1] + ")" : "N/A"
-          temptable.daily.mintemp.highest = summary[2][0]!== "M" ? summary[2][0] + " °F (" + summary[2][1] + ")" : "N/A"
-          temptable.daily.mintemp.lowest = summary[3][0]!== "M" ? summary[3][0] + " °F (" + summary[3][1] + ")" : "N/A"
-          temptable.daily.avetemp.highest = summary[4][0]!== "M" ? summary[4][0] + " °F (" + summary[4][1] + ")" : "N/A"
-          temptable.daily.avetemp.lowest = summary[5][0]!== "M" ? summary[5][0] + " °F (" + summary[5][1] + ")" : "N/A"
-          temptable.daily.precipitation.highest = summary[6][0]!== "M" ? summary[6][0] + " inches (" + summary[6][1] + ")" : "N/A"
-          temptable.daily.precipitation.lowest = summary[7][0]!== "M" ? summary[7][0] + " inches (" + summary[7][1] + ")" : "N/A"
-          temptable.daily.snowfall.highest = summary[8][0]!== "M" ? summary[8][0] + " inches (" + summary[8][1] + ")" : "N/A"
-          temptable.daily.snowfall.lowest = summary[9][0]!== "M" ? summary[9][0] + " inches (" + summary[9][1] + ")" : "N/A"
-          temptable.daily.snowdepth.highest = summary[10][0]!== "M" ? summary[10][0] + " inches (" + summary[10][1] + ")" : "N/A"
-          temptable.daily.snowdepth.lowest = summary[11][0]!== "M" ? summary[11][0] + " inches (" + summary[11][1] + ")" : "N/A"
+          temptable.daily.maxtemp.highest = summary[0][0]!== "M" ? summary[0][0] + " °F (" + summary[0][1].slice(0,4) + ")" : "N/A"
+          temptable.daily.maxtemp.lowest = summary[1][0]!== "M" ? summary[1][0] + " °F (" + summary[1][1].slice(0,4) + ")" : "N/A"
+          temptable.daily.mintemp.highest = summary[2][0]!== "M" ? summary[2][0] + " °F (" + summary[2][1].slice(0,4) + ")" : "N/A"
+          temptable.daily.mintemp.lowest = summary[3][0]!== "M" ? summary[3][0] + " °F (" + summary[3][1].slice(0,4) + ")" : "N/A"
+          temptable.daily.avetemp.highest = summary[4][0]!== "M" ? summary[4][0] + " °F (" + summary[4][1].slice(0,4) + ")" : "N/A"
+          temptable.daily.avetemp.lowest = summary[5][0]!== "M" ? summary[5][0] + " °F (" + summary[5][1].slice(0,4) + ")" : "N/A"
+          temptable.daily.precipitation.highest = summary[6][0]!== "M" ? summary[6][0] + " inches (" + summary[6][1].slice(0,4) + ")" : "N/A"
+          temptable.daily.precipitation.lowest = summary[7][0]!== "M" ? summary[7][0] + " inches (" + summary[7][1].slice(0,4) + ")" : "N/A"
+          temptable.daily.snowfall.highest = summary[8][0]!== "M" ? summary[8][0] + " inches (" + summary[8][1].slice(0,4) + ")" : "N/A"
+          temptable.daily.snowfall.lowest = summary[9][0]!== "M" ? summary[9][0] + " inches (" + summary[9][1].slice(0,4) + ")" : "N/A"
+          temptable.daily.snowdepth.highest = summary[10][0]!== "M" ? summary[10][0] + " inches (" + summary[10][1].slice(0,4) + ")" : "N/A"
+          temptable.daily.snowdepth.lowest = summary[11][0]!== "M" ? summary[11][0] + " inches (" + summary[11][1].slice(0,4) + ")" : "N/A"
           this.setState({table: temptable})
         })
         .catch(err => console.log(err))
@@ -146,14 +146,14 @@ class ClimateTable extends React.Component {
         .then(res => {
           let data = res.data.data[0]
           let temptable = table
-          temptable.monthly.precipitation.observed = data[1]!=="T" ? (data[1]!=="M" ? data[1] + " inches" : "N/A") : "T"
-          temptable.monthly.precipitation.normal = data[2]!=="T" ? (data[2]!=="M" ? data[2] + " inches" : "N/A") : "T"
-          temptable.monthly.snowfall.observed = data[3]!=="T" ? (data[3]!=="M" ? data[3] + " inches" : "N/A") : "T"
-          temptable.monthly.snowfall.normal = data[4]!=="T" ? (data[4]!=="M" ? data[4] + " inches" : "N/A") : "T"
-          temptable.seasonal.snowfall.observed = data[5]!=="T" ? (data[5]!=="M" ? data[5] + " inches" : "N/A") : "T"
-          temptable.seasonal.snowfall.normal = data[6]!=="T" ? (data[6]!=="M" ? data[6] + " inches" : "N/A") : "T"
-          temptable.yearly.precipitation.observed = data[7]!=="T" ? (data[7]!=="M" ? data[7] + " inches" : "N/A") : "T"
-          temptable.yearly.precipitation.normal = data[8]!=="T" ? (data[8]!=="M" ? data[8] + " inches" : "N/A") : "T"
+          temptable.monthly.precipitation.observed = data[1]!=="T" ? (data[1]!=="M" ? data[1] + " inches" : "N/A") : "Trace"
+          temptable.monthly.precipitation.normal = data[2]!=="T" ? (data[2]!=="M" ? data[2] + " inches" : "N/A") : "Trace"
+          temptable.monthly.snowfall.observed = data[3]!=="T" ? (data[3]!=="M" ? data[3] + " inches" : "N/A") : "Trace"
+          temptable.monthly.snowfall.normal = data[4]!=="T" ? (data[4]!=="M" ? data[4] + " inches" : "N/A") : "Trace"
+          temptable.seasonal.snowfall.observed = data[5]!=="T" ? (data[5]!=="M" ? data[5] + " inches" : "N/A") : "Trace"
+          temptable.seasonal.snowfall.normal = data[6]!=="T" ? (data[6]!=="M" ? data[6] + " inches" : "N/A") : "Trace"
+          temptable.yearly.precipitation.observed = data[7]!=="T" ? (data[7]!=="M" ? data[7] + " inches" : "N/A") : "Trace"
+          temptable.yearly.precipitation.normal = data[8]!=="T" ? (data[8]!=="M" ? data[8] + " inches" : "N/A") : "Trace"
           this.setState({table: temptable})
         })
         .catch(err => console.log(err))
@@ -180,14 +180,14 @@ class ClimateTable extends React.Component {
         .then(res => {
           let summary = res.data.smry
           let temptable = this.state.table
-          temptable.monthly.precipitation.highest = summary[0][0] === "M" ? "N/A" : (summary[0][0] === "T" ? "T" : summary[0][0] + " inches") + " (" + summary[0][1] + ")"
-          temptable.monthly.precipitation.lowest = summary[1][0] === "M" ? "N/A" : (summary[1][0] === "T" ? "T" : summary[1][0] + " inches") + " (" + summary[1][1] + ")"
-          temptable.monthly.snowfall.highest = summary[2][0] === "M" ? "N/A" : (summary[2][0] === "T" ? "T" : summary[2][0] + " inches") + " (" + summary[2][1] + ")"
-          temptable.monthly.snowfall.lowest = summary[3][0] === "M" ? "N/A" : (summary[3][0] === "T" ? "T" : summary[3][0] + " inches") + " (" + summary[3][1] + ")"
-          temptable.seasonal.snowfall.highest = summary[4][0] === "M" ? "N/A" : (summary[4][0] === "T" ? "T" : summary[4][0] + " inches") + " (" + summary[4][1] + ")"
-          temptable.seasonal.snowfall.lowest = summary[5][0] === "M" ? "N/A" : (summary[5][0] === "T" ? "T" : summary[5][0] + " inches") + " (" + summary[5][1] + ")"
-          temptable.yearly.precipitation.highest = summary[6][0] === "M" ? "N/A" : (summary[6][0] === "T" ? "T" : summary[6][0] + " inches") + " (" + summary[6][1] + ")"
-          temptable.yearly.precipitation.lowest = summary[7][0] === "M" ? "N/A" : (summary[7][0] === "T" ? "T" : summary[7][0] + " inches") + " (" + summary[7][1] + ")"
+          temptable.monthly.precipitation.highest = summary[0][0] === "M" ? "N/A" : (summary[0][0] === "T" ? "Trace" : summary[0][0] + " inches") + " (" + summary[0][1].slice(0,4) + ")"
+          temptable.monthly.precipitation.lowest = summary[1][0] === "M" ? "N/A" : (summary[1][0] === "T" ? "Trace" : summary[1][0] + " inches") + " (" + summary[1][1].slice(0,4) + ")"
+          temptable.monthly.snowfall.highest = summary[2][0] === "M" ? "N/A" : (summary[2][0] === "T" ? "Trace" : summary[2][0] + " inches") + " (" + summary[2][1].slice(0,4) + ")"
+          temptable.monthly.snowfall.lowest = summary[3][0] === "M" ? "N/A" : (summary[3][0] === "T" ? "Trace" : summary[3][0] + " inches") + " (" + summary[3][1].slice(0,4) + ")"
+          temptable.seasonal.snowfall.highest = summary[4][0] === "M" ? "N/A" : (summary[4][0] === "T" ? "Trace" : summary[4][0] + " inches") + " (" + summary[4][1].slice(0,4) + ")"
+          temptable.seasonal.snowfall.lowest = summary[5][0] === "M" ? "N/A" : (summary[5][0] === "T" ? "Trace" : summary[5][0] + " inches") + " (" + summary[5][1].slice(0,4) + ")"
+          temptable.yearly.precipitation.highest = summary[6][0] === "M" ? "N/A" : (summary[6][0] === "T" ? "Trace" : summary[6][0] + " inches") + " (" + summary[6][1].slice(0,4) + ")"
+          temptable.yearly.precipitation.lowest = summary[7][0] === "M" ? "N/A" : (summary[7][0] === "T" ? "Trace" : summary[7][0] + " inches") + " (" + summary[7][1].slice(0,4) + ")"
           this.setState({table: temptable})
         })
         .catch(err => console.log(err))

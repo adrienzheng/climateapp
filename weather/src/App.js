@@ -22,24 +22,29 @@ import {
   Table,
 } from "semantic-ui-react"
 
+import store from 'store'
+
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentLocation: null,
+      current: null,
       deleteConfirmOpen: false,
-      favorites: [
-        {city: "Ithaca", state: "NY", zip: 14850},
-        {city: "New York", state: "NY", zip: 10001},
-        {city: "San Jose", state: "CA", zip: 95123},
-      ],
+      favorites: [],
       favoritesVisible: false,
       message: {visible: false, content: null}
     }
   }
 
-  setLocation = location => {
-    this.setState({currentLocation: location})
+  componentDidMount() {
+    this.syncFavorites("download")
+  }
+
+  setCurrent = (city, state, zip, id, date) => {
+    this.setState({
+      current: {city: city, state: state, zip: zip, id: id, date: date},
+      favoritesVisible: false
+    })
   }
 
   showFavorites = () => {
@@ -54,13 +59,34 @@ class App extends React.Component {
       deleteConfirmOpen: false,
       favorites: favorites,
       favoritesVisible: false,
-      message: {visible: true, content: `You have removed "${deleted.city}, ${deleted.state} ${deleted.zip}" from you favorites.` }
+      message: {visible: true, content: `You have removed "${deleted.city}, ${deleted.state} ${deleted.zip}" from your favorites.` }
     })
-    setTimeout(() => this.setState({showFavorites: true}), 0)
+    this.syncFavorites("upload")
+  }
+
+  handleAdd = (city, state, zip, station, date) => {
+    let favorites = this.state.favorites
+    favorites.push({city: city, state: state, zip: zip, station: station, date: date})
+    this.setState({
+      favorites: favorites,
+      message: {visible: true, content: `You have added "${city}, ${state} ${zip}" to your favorites`}
+    })
+    console.log(this.state.favorites)
+    this.syncFavorites("upload")
+  }
+
+  syncFavorites = mode => {
+    if  (mode==="upload") {
+      let favorites = this.state.favorites
+      store.set("favorites", favorites)
+    } else {
+      this.setState({favorites: store.get("favorites")})
+    }
   }
 
   render() {
     const {
+      current,
       deleteConfirmOpen,
       favorites,
       favoritesVisible,
@@ -92,7 +118,7 @@ class App extends React.Component {
             onClose={() => this.setState({favoritesVisible: false})}
             open={favoritesVisible}
           >
-            <Modal.Header>My Favorite Locations</Modal.Header>
+            <Modal.Header>My Favorite</Modal.Header>
             <Modal.Content>
               {
                 favorites.length > 0 ? (
@@ -102,27 +128,28 @@ class App extends React.Component {
                     <Table.HeaderCell>City</Table.HeaderCell>
                     <Table.HeaderCell>State</Table.HeaderCell>
                     <Table.HeaderCell>Zip Code</Table.HeaderCell>
+                    <Table.HeaderCell>Station</Table.HeaderCell>
+                    <Table.HeaderCell>Date</Table.HeaderCell>
                     <Table.HeaderCell collapsing>Actions</Table.HeaderCell>
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
                   {
-                    favorites.map(({city, state, zip}, index) => <Table.Row key={index}>
+                    favorites.map(({city, state, zip, station, date}, index) => <Table.Row key={index}>
                       <Table.Cell>{city}</Table.Cell>
                       <Table.Cell>{state}</Table.Cell>
                       <Table.Cell>{zip}</Table.Cell>
+                      <Table.Cell>{station.name}</Table.Cell>
+                      <Table.Cell>{date}</Table.Cell>
                       <Table.Cell collapsing>
                         <Link to = {`/location/${zip}`}>
                           <Button
                             icon
                             labelPosition="right"
-                            onClick={() => this.setState({
-                              currentLocation: {city: city, state: state, zip: zip},
-                              favoritesVisible: false,
-                            })}
+                            onClick={() => this.setCurrent(city, state, zip, station.id, date)}
                             positive
                           >
-                            Check Weather
+                            Check Climate
                             <Icon name="search" />
                           </Button>
                         </Link>
@@ -133,7 +160,7 @@ class App extends React.Component {
                           onClick = {() => this.setState({deleteConfirmOpen: true})}
                         >
                           Delete
-                          <Icon name="delete"></Icon>
+                          <Icon name="delete" />
                         </Button>
                         <Confirm
                           open = {deleteConfirmOpen}
@@ -165,12 +192,19 @@ class App extends React.Component {
             <Route 
               exact
               path="/"
-              render={() => <Search showFavorites = {this.showFavorites} setLocation = {location => this.setLocation(location)}/>}
+              render={() => <Search showFavorites = {this.showFavorites}/>}
             />
             <Route
               exact
               path="/location/:zip"
-              render={() => <Home showFavorites = {this.showFavorites}/>}
+              render={() => <Home
+                showFavorites = {this.showFavorites}
+                addFavorite = {this.handleAdd}
+                removeFavorite = {this.handleDelete}
+                favorites={favorites}
+                current = {current}
+                setCurrent = {this.setCurrent}
+              />}
             />
           </Switch>
         </Router>

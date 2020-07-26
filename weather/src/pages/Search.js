@@ -22,18 +22,7 @@ class Search extends React.Component {
   }
 
   search = () => {
-    fetch(`http://www.mapquestapi.com/geocoding/v1/address?key=m1lsJZVvDgjMwJ4bAmiVTdEqoJ9h2DeA&location=${this.state.zipToSearch}`)
-      .then(res => res.json())
-      .then(
-        result => {
-          let location = result.results[0].locations[0]
-          this.props.setLocation({city: location.adminArea5, state: location.adminArea3, zip: location.postalCode, latitude: location.latLng.lat, longtitude: location.latLng.lng})
-          this.props.history.push(`/location/${this.state.zipToSearch}`)
-        },
-        error => {
-          alert("The zip code entered is invalid.")
-        }
-      )
+    this.props.history.push(`/location/${this.state.zipToSearch}`)
   }
 
   render() {
