@@ -11,7 +11,26 @@
 
   .ui.segment  {
     #table-cont{
-      overflow-x: scroll;
+      position: relative;
+      overflow: auto;
+      white-space: nowrap;
+      border: 1px solid rgba(34,36,38,.15);
+      border-radius: calc(2rem / 7);
+
+      table {
+        border: none;
+      }
+      
+
+      .left {
+        position: sticky;
+        left: -1px;
+        background-color: white;
+      }
+
+      .left.header {
+        background-color: #f9fafb;
+      }
 
     }
 

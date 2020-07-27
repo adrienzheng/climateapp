@@ -191,8 +191,6 @@ class ClimateTable extends React.Component {
           this.setState({table: temptable})
         })
         .catch(err => console.log(err))
-
-
     }
   }
 
@@ -212,7 +210,6 @@ class ClimateTable extends React.Component {
             icon="chart line"
             size="mini"
             compact
-            floated="right"
             onClick={() => this.props.updateChart(attr)}
           />
         }
@@ -226,10 +223,10 @@ class ClimateTable extends React.Component {
     } = this.state
 
     return (
-      <Table celled structured striped compact unstackable>
+      <Table compact unstackable definition>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell className="hard-left" colSpan="2" />
+            <Table.HeaderCell className="left header" ><div>Daily</div></Table.HeaderCell>
             <Table.HeaderCell>Observed</Table.HeaderCell>
             <Table.HeaderCell>Normal</Table.HeaderCell>
             <Table.HeaderCell>Record Highest</Table.HeaderCell>
@@ -238,74 +235,103 @@ class ClimateTable extends React.Component {
         </Table.Header>
         <Table.Body>
           <Table.Row>
-            <Table.Cell className="hard-left" rowSpan="6">Daily</Table.Cell>
-    <Table.Cell className="next-left">Max Temperature{this.getChartButton("Daily Max Temperature")}</Table.Cell>
+            <Table.Cell className="left">{this.getChartButton("Daily Max Temperature")}Max Temperature</Table.Cell>
             <Table.Cell>{table.daily.maxtemp.observed || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.maxtemp.normal || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.maxtemp.highest || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.maxtemp.lowest || <Loader active  inline size="mini"/>}</Table.Cell>
           </Table.Row>
           <Table.Row>
-            <Table.Cell className="next-left">Min Temperature{this.getChartButton("Daily Min Temperature")}</Table.Cell>
+            <Table.Cell className="left">{this.getChartButton("Daily Min Temperature")}Min Temperature</Table.Cell>
             <Table.Cell>{table.daily.mintemp.observed || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.mintemp.normal || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.mintemp.highest || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.mintemp.lowest || <Loader active  inline size="mini"/>}</Table.Cell>
           </Table.Row>
           <Table.Row>
-            <Table.Cell className="next-left">Average Temperature{this.getChartButton("Daily Average Temperature")}</Table.Cell>
+            <Table.Cell className="left">{this.getChartButton("Daily Average Temperature")}Avrg Temperature</Table.Cell>
             <Table.Cell>{table.daily.avetemp.observed || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.avetemp.normal || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.avetemp.highest || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.avetemp.lowest || <Loader active  inline size="mini"/>}</Table.Cell>
           </Table.Row>
           <Table.Row>
-            <Table.Cell className="next-left">Precipitation{this.getChartButton("Daily Precipitation")}</Table.Cell>
+            <Table.Cell className="left">{this.getChartButton("Daily Precipitation")}Precipitation</Table.Cell>
             <Table.Cell>{table.daily.precipitation.observed || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.precipitation.normal || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.precipitation.highest || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.precipitation.lowest || <Loader active  inline size="mini"/>}</Table.Cell>
           </Table.Row>
           <Table.Row>
-            <Table.Cell className="next-left">Snowdepth{this.getChartButton("Daily Snowdepth")}</Table.Cell>
+            <Table.Cell className="left">{this.getChartButton("Daily Snowdepth")}Snowdepth</Table.Cell>
             <Table.Cell>{table.daily.snowdepth.observed || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.snowdepth.normal || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.snowdepth.highest || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.snowdepth.lowest || <Loader active  inline size="mini"/>}</Table.Cell>
           </Table.Row>
           <Table.Row>
-            <Table.Cell className="next-left">Snowfall{this.getChartButton("Daily Snowfall")}</Table.Cell>
+            <Table.Cell className="left">{this.getChartButton("Daily Snowfall")}Snowfall</Table.Cell>
             <Table.Cell>{table.daily.snowfall.observed || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.snowfall.normal || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.snowfall.highest || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.daily.snowfall.lowest || <Loader active  inline size="mini"/>}</Table.Cell>
           </Table.Row>
+        </Table.Body>
+        <Table.Header>
           <Table.Row>
-            <Table.Cell className="hard-left" rowSpan="2">Month-To-Date</Table.Cell>
-            <Table.Cell className="next-left">Precipitation{this.getChartButton("Month-To-Date Precipitation")}</Table.Cell>
+            <Table.HeaderCell className="left header">Month-To-Date</Table.HeaderCell>
+            <Table.HeaderCell>Observed</Table.HeaderCell>
+            <Table.HeaderCell>Normal</Table.HeaderCell>
+            <Table.HeaderCell>Record Highest</Table.HeaderCell>
+            <Table.HeaderCell>Record Lowest</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell className="left">{this.getChartButton("Month-To-Date Precipitation")}Precipitation</Table.Cell>
             <Table.Cell>{table.monthly.precipitation.observed || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.monthly.precipitation.normal || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.monthly.precipitation.highest || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.monthly.precipitation.lowest || <Loader active  inline size="mini"/>}</Table.Cell>
           </Table.Row>
           <Table.Row>
-            <Table.Cell className="next-left">Snowfall{this.getChartButton("Month-To-Date Snowfall")}</Table.Cell>
+            <Table.Cell className="left">{this.getChartButton("Month-To-Date Snowfall")}Snowfall</Table.Cell>
             <Table.Cell>{table.monthly.snowfall.observed || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.monthly.snowfall.normal || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.monthly.snowfall.highest || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.monthly.snowfall.lowest || <Loader active  inline size="mini"/>}</Table.Cell>
           </Table.Row>
+        </Table.Body>
+        <Table.Header>
           <Table.Row>
-            <Table.Cell className="hard-left">Season-to-Date</Table.Cell>
-            <Table.Cell className="next-left">Snowfall{this.getChartButton("Season-To-Date Snowfall")}</Table.Cell>
+            <Table.HeaderCell className="left header">Season-To-Date</Table.HeaderCell>
+            <Table.HeaderCell>Observed</Table.HeaderCell>
+            <Table.HeaderCell>Normal</Table.HeaderCell>
+            <Table.HeaderCell>Record Highest</Table.HeaderCell>
+            <Table.HeaderCell>Record Lowest</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell className="left">{this.getChartButton("Season-To-Date Snowfall")}Snowfall</Table.Cell>
             <Table.Cell>{table.seasonal.snowfall.observed || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.seasonal.snowfall.normal || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.seasonal.snowfall.highest || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.seasonal.snowfall.lowest || <Loader active  inline size="mini"/>}</Table.Cell>
           </Table.Row>
+        </Table.Body>
+        <Table.Header>
           <Table.Row>
-            <Table.Cell className="hard-left">Year-to-Date</Table.Cell>
-            <Table.Cell className="next-left">Precipitation{this.getChartButton("Year-To-Date Precipitation")}</Table.Cell>
+            <Table.HeaderCell className="left header">Year-To-Date</Table.HeaderCell>
+            <Table.HeaderCell>Observed</Table.HeaderCell>
+            <Table.HeaderCell>Normal</Table.HeaderCell>
+            <Table.HeaderCell>Record Highest</Table.HeaderCell>
+            <Table.HeaderCell>Record Lowest</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell className="left">{this.getChartButton("Year-To-Date Precipitation")}Precipitation</Table.Cell>
             <Table.Cell>{table.yearly.precipitation.observed || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.yearly.precipitation.normal || <Loader active  inline size="mini"/>}</Table.Cell>
             <Table.Cell>{table.yearly.precipitation.highest || <Loader active  inline size="mini"/>}</Table.Cell>

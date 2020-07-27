@@ -4,6 +4,8 @@ import {
   withRouter
 } from "react-router-dom"
 
+import {postcodeValidator} from 'postcode-validator'
+
 import {
   Button,
   Header,
@@ -22,7 +24,11 @@ class Search extends React.Component {
   }
 
   search = () => {
-    this.props.history.push(`/location/${this.state.zipToSearch}`)
+    if(postcodeValidator(this.state.zipToSearch, "US")) {
+      this.props.history.push(`/location/${this.state.zipToSearch}`)
+    } else {
+      alert ("Invalid zipcode. Please try a different one.")
+    }
   }
 
   render() {
@@ -40,29 +46,40 @@ class Search extends React.Component {
             Enter a zip code to look up the climate history.
           </Header.Subheader>
         </Header>
-        <form>
-          <Input
-            id="search-bar"
-            focus
-            placeholder="10001"
-            size="large"
-            onChange = {(event, data) => {
-              this.setState({zipToSearch: data.value})
-            }}
-          />
-          <Link><Button 
-            color="blue"
-            icon
-            id="search-btn"
-            labelPosition="right"
-            onClick={() => this.search()}
-            primary
-            size="large"
-          >
-            Search
-            <Icon name="search"/>
-          </Button></Link>
-        </form>
+        <div id = "searchbar-cont">
+        <Input
+          id="search-bar"
+          focus
+          placeholder="10001"
+          size="large"
+          onChange = {(event, data) => {
+            this.setState({zipToSearch: data.value})
+          }}
+        />      
+        <Button 
+          color="blue"
+          icon
+          id="search-btn"
+          labelPosition="right"
+          onClick={() => this.search()}
+          primary
+          size="large"
+        >
+          Search
+          <Icon name="search"/>
+        </Button>
+        <Button
+          color="blue"
+          icon
+          labelPosition="right"
+          onClick={() => this.props.showFavorites()}
+          primary
+          size="large"
+        >
+          My Favorites
+          <Icon name="star" color="yellow"/>
+        </Button>
+        </div>
       </div>
     )
   }

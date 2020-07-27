@@ -141,11 +141,34 @@ class ClimateChart extends React.Component {
         let series = [
           {data: observed, name: currentDataPoint+ " (" + this.getUnit()+ ")" },
         ]
-        data[0].length>2 && series.push({data: normal, name: "Normal (" + this.getUnit()+")"})
+        // data[0].length>2 && series.push({data: normal, name: "Normal (" + this.getUnit()+")", marker: {enabled: false}})
+        let yAxis
+        data[0].length>2 ? (
+          yAxis = {
+            title: {
+              text: this.getUnit()
+            },
+            plotLines: [
+              {
+                value: normal[0],
+                label: {text: "Normal (" + this.getUnit()+"): "+normal[0], align: "right"},
+                color: "green",
+                width: 2,
+                zIndex: 5,
+              }
+            ]
+          }
+        ) : (
+          yAxis = {
+            title: {
+              text: this.getUnit()
+            }
+          }
+        )
         this.setState({
           title: {text: currentDataPoint},
           xAxis: {categories: categories},
-          yAxis: {title: {text: this.getUnit()}},
+          yAxis: yAxis,
           series: series
         })
         chartObj.hideLoading()
