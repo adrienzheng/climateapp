@@ -32,8 +32,10 @@ class App extends React.Component {
       deleteConfirmOpen: false,
       favorites: [],
       favoritesVisible: false,
-      message: {visible: false, content: null}
+      message: {visible: false, content: null, positive: false, warning: false, header: null, icon: null}
     }
+
+    this.messageTimer = null
   }
 
   componentDidMount() {
@@ -58,9 +60,15 @@ class App extends React.Component {
     this.setState({
       deleteConfirmOpen: false,
       favorites: favorites,
-      favoritesVisible: false,
-      message: {visible: true, content: `You have removed "${deleted.city}, ${deleted.state} ${deleted.zip}" from your favorites.` }
+      favoritesVisible: false
     })
+    this.setMessage(
+      `You have removed "${deleted.city}, ${deleted.state} ${deleted.zip}" from your favorites.`,
+      true,
+      false,
+      "Success!",
+      "check"
+    )
     this.syncFavorites("upload")
   }
 
@@ -68,10 +76,15 @@ class App extends React.Component {
     let favorites = this.state.favorites
     favorites.push({city: city, state: state, zip: zip, station: station, date: date})
     this.setState({
-      favorites: favorites,
-      message: {visible: true, content: `You have added "${city}, ${state} ${zip}" to your favorites`}
+      favorites: favorites
     })
-    console.log(this.state.favorites)
+    this.setMessage(
+      `You have added "${city}, ${state} ${zip}" to your favorites`,
+      true,
+      false,
+      "Success!",
+      "check"
+    )
     this.syncFavorites("upload")
   }
 
@@ -80,8 +93,37 @@ class App extends React.Component {
       let favorites = this.state.favorites
       store.set("favorites", favorites)
     } else {
-      this.setState({favorites: store.get("favorites")})
+      let favorites = store.get("favorites")
+      if (favorites && favorites.length > 0) {
+        this.setState({favorites: favorites})
+      }
     }
+  }
+
+  setMessage = (content, positive, warning, header, icon) => {
+    clearTimeout(this.messageTimer)
+    this.setState({message: {
+      visible: true,
+      content: content,
+      positive: positive,
+      warning: warning,
+      header: header,
+      icon: icon
+    }})
+    this.messageTimer = setTimeout(() => {
+      this.closeMessage()
+    }, 3000)
+  }
+  
+  closeMessage = () => {
+    this.setState({message: {
+      visible: false,
+      content: null,
+      positive: false,
+      warning: false,
+      header: null,
+      icon: null
+    }})
   }
 
   render() {
@@ -100,13 +142,14 @@ class App extends React.Component {
             hidden = {!message.visible}
             icon
             onDismiss = {() => {
-              this.setState({message: {visible: false, content: null}})
+              this.setState({message: {visible: false, content: null, positive: false, warning: false, header: null, icon: null}})
             }}
-            positive
+            positive = {message.positive}
+            warning = {message.warning}
           > 
-            <Icon name="check" />
+            <Icon name={message.icon} />
             <Message.Header>
-              Success!
+              {message.header}
             </Message.Header>
             <Message.Content>
               {message.content}
@@ -204,6 +247,7 @@ class App extends React.Component {
                 favorites={favorites}
                 current = {current}
                 setCurrent = {this.setCurrent}
+                showMessage = {this.setMessage}
               />}
             />
           </Switch>

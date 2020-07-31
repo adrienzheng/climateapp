@@ -4,6 +4,9 @@ import _ from "lodash"
 
 import Highcharts from "highcharts/highstock"
 import HighchartsReact from "highcharts-react-official"
+import addNoDataModule from 'highcharts/modules/no-data-to-display';
+
+addNoDataModule(Highcharts)
 
 class ClimateChart extends React.Component {
   constructor(props) {
@@ -49,13 +52,13 @@ class ClimateChart extends React.Component {
 
   getChartData = () => {
     let chartObj = this.chart.current.chart
-    chartObj.showLoading()
+    // chartObj.showLoading()
     const {id, date, currentDataPoint} = this.props
     let params = {
       sid: id,
       sdate: "por" + date.substring(4),
       edate: date,
-      meta: "",
+      meta: "name",
       elems: null
     }
     switch(currentDataPoint) {
@@ -126,52 +129,64 @@ class ClimateChart extends React.Component {
       .get("http://data.rcc-acis.org/StnData", {params: {params: params}})
       .then(res => {
         let data = res.data.data
-        let categories = _.range(parseInt(data[0][0].substring(0, 4)), parseInt(date.substring(0, 4))+1)
-        let observed = [], normal = []
-        data.forEach(elem => {
-          if (elem[1] === "M") {
-            observed.push(null)
-          } else if (elem[1] === "T") {
-            observed.push(0)
-          } else {
-            observed.push(Number(elem[1]))
-          }
-          normal.push(elem[2] ? Number(elem[2]) : null)
-        })
-        let series = [
-          {data: observed, name: currentDataPoint+ " (" + this.getUnit()+ ")" },
-        ]
-        // data[0].length>2 && series.push({data: normal, name: "Normal (" + this.getUnit()+")", marker: {enabled: false}})
-        let yAxis
-        data[0].length>2 ? (
-          yAxis = {
-            title: {
-              text: this.getUnit()
-            },
-            plotLines: [
-              {
-                value: normal[0],
-                label: {text: "Normal (" + this.getUnit()+"): "+normal[0], align: "right"},
-                color: "green",
-                width: 2,
-                zIndex: 5,
-              }
-            ]
-          }
-        ) : (
-          yAxis = {
-            title: {
-              text: this.getUnit()
+        console.log(res)
+        if (data) {
+          let categories = _.range(parseInt(data[0][0].substring(0, 4)), parseInt(date.substring(0, 4))+1)
+          let observed = [], normal = []
+          data.forEach(elem => {
+            if (elem[1] === "M") {
+              observed.push(null)
+            } else if (elem[1] === "T") {
+              observed.push(0)
+            } else {
+              observed.push(Number(elem[1]))
             }
-          }
-        )
-        this.setState({
-          title: {text: currentDataPoint},
-          xAxis: {categories: categories},
-          yAxis: yAxis,
-          series: series
-        })
-        chartObj.hideLoading()
+            normal.push(elem[2] ? Number(elem[2]) : null)
+          })
+          let series = [
+            {data: observed, name: currentDataPoint+ " (" + this.getUnit()+ ")" },
+          ]
+          let yAxis
+          data[0].length>2 ? (
+            yAxis = {
+              title: {
+                text: this.getUnit()
+              },
+              plotLines: [
+                {
+                  value: normal[0],
+                  label: {text: "Normal (" + this.getUnit()+"): "+normal[0], align: "right"},
+                  color: "green",
+                  width: 2,
+                  zIndex: 5,
+                }
+              ]
+            }
+          ) : (
+            yAxis = {
+              title: {
+                text: this.getUnit()
+              }
+            }
+          )
+          this.setState({
+            title: {text: currentDataPoint},
+            xAxis: {categories: categories},
+            yAxis: yAxis,
+            series: series
+          })
+        } else {
+          this.setState({
+            title: {text: currentDataPoint},
+            xAxis: null,
+            yAxis: {
+              title: {
+                text: this.getUnit()
+              }
+            },
+            series: []
+          })
+        }
       })
       .catch(err => console.log(err))
   }

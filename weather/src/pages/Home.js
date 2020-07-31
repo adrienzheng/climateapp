@@ -46,18 +46,17 @@ class Home extends React.Component {
       isSearchingState: true,
       stationList: [],
     }
+  }
 
+  componentDidMount = () => {
     this.setStations()
   }
 
   componentDidUpdate = prevProps => {
     if(prevProps.current !== this.props.current ) {
+      this.setState({currentStationId: this.props.current.id})
       this.props.history.push(`/location/${this.props.current.zip}`)
-      this.changeDate(this.props.current.date).then(() => {
-        console.log(this.props.current.id)
-        // this.setState({currentStationId: this.props.current.id})
-        console.log(this.state.currentStationId)
-      })
+      this.changeDate(this.props.current.date)
     }
   }
 
@@ -79,16 +78,48 @@ class Home extends React.Component {
       bbox: box.toString(),
       date: this.state.currentDate
     }}})
-    console.log(res)
     let stationList = processMetaResults(res, this.state.currentLocation.ll)
-    console.log(stationList)
     return stationList
   }
 
   setStations = async() => {
     let stationList = await this.getStations()
-    console.log(stationList)
-    this.setState({stationList: stationList, currentStationId: stationList[0] ? stationList[0].id : null, isSearchingState: false})
+
+    let inStationList = (id, list) => {
+      let result = false
+      list.forEach(st => {
+        if (st.id === id) {
+          result = true
+        }
+      })
+      return result
+    }
+
+    if (this.state.currentStationId && inStationList(this.state.currentStationId, stationList)) {
+      this.setState({stationList: stationList, isSearchingState: false})
+    } else {
+      if (stationList.length === 0) {
+        this.setState({stationList: stationList, currentStationId: null, isSearchingState: false})
+        this.props.showMessage(
+          "None of the stations near the location has valid data for the date. Please select a different date.",
+          false,
+          true,
+          "Sorry!",
+          "ban"
+        )
+      } else {
+        if (this.state.currentStationId) {
+          this.props.showMessage(
+            "The station previously selected has not updated any data for the date, and the numbers shown come from a different station nearby.",
+            false,
+            true,
+            "Sorry!",
+            "ban"
+          )
+        }
+        this.setState({stationList: stationList, currentStationId: stationList[0].id, isSearchingState: false})
+      }
+    }
     return null
   }
 
@@ -130,7 +161,6 @@ class Home extends React.Component {
       isSearchingState
     } = this.state
     if (this.isFavorite()) {
-      console.log("is favorite")
       let favorites = this.props.favorites
       favorites.forEach((fav, index) => {
         if (currentLocation.city === fav.city && currentLocation.state === fav.state && currentLocation.zip === fav.zip && currentStationId === fav.station.id && currentDate === fav.date) {
