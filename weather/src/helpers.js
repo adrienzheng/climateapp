@@ -1,7 +1,7 @@
 import axios from 'axios'
 const defaultIdPriority = [6, 1, 2, 3, 5, 7, 4, 17, 19, 26, 31, 27, 13, 22, 28, 11, 10, 14]
 
-export const determineBbox = (lat, lng, radius = 10) => {
+export const determineBbox = (lat, lng, radius = 30) => {
   let latoffset = radius / 69.047
   let lngoffset = radius / (69.17 * Math.cos(lat * 0.01745))
   return [lng - lngoffset, lat - latoffset, lng + lngoffset, lat + latoffset]
